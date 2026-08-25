@@ -1,0 +1,29 @@
+.model-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.model-main {
+  flex: 1;
+  padding: 8rem 0 5rem;
+}
+
+.model-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.model-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.model-description {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}

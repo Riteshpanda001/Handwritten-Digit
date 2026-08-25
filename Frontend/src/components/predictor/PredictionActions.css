@@ -1,0 +1,45 @@
+.prediction-actions-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--interactive-cyan);
+  color: var(--interactive-cyan);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toast-badge {
+  font-size: 0.8rem;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}

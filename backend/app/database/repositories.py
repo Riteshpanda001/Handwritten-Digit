@@ -17,9 +17,11 @@ class PredictionRepository:
         predicted_digit: int,
         confidence: float,
         confidence_scores: Dict[int, float],
-        image_filename: Optional[str] = None
+        image_filename: Optional[str] = None,
+        user_id: Optional[int] = None
     ) -> PredictionRecord:
         record = PredictionRecord(
+            user_id=user_id,
             input_type=input_type,
             predicted_digit=predicted_digit,
             confidence=confidence,
@@ -36,9 +38,12 @@ class PredictionRepository:
         db: Session,
         skip: int = 0,
         limit: int = 50,
-        digit_filter: Optional[int] = None
+        digit_filter: Optional[int] = None,
+        user_id: Optional[int] = None
     ) -> List[PredictionRecord]:
         query = db.query(PredictionRecord)
+        if user_id is not None:
+            query = query.filter(PredictionRecord.user_id == user_id)
         if digit_filter is not None:
             query = query.filter(PredictionRecord.predicted_digit == digit_filter)
         return query.order_by(desc(PredictionRecord.created_at)).offset(skip).limit(limit).all()
@@ -48,11 +53,17 @@ class PredictionRepository:
         return db.query(PredictionRecord).filter(PredictionRecord.id == record_id).first()
 
     @staticmethod
-    def count_records(db: Session) -> int:
-        return db.query(PredictionRecord).count()
+    def count_records(db: Session, user_id: Optional[int] = None) -> int:
+        query = db.query(PredictionRecord)
+        if user_id is not None:
+            query = query.filter(PredictionRecord.user_id == user_id)
+        return query.count()
 
     @staticmethod
-    def delete_all_history(db: Session) -> int:
-        num_deleted = db.query(PredictionRecord).delete()
+    def delete_all_history(db: Session, user_id: Optional[int] = None) -> int:
+        query = db.query(PredictionRecord)
+        if user_id is not None:
+            query = query.filter(PredictionRecord.user_id == user_id)
+        num_deleted = query.delete(synchronize_session=False)
         db.commit()
         return num_deleted

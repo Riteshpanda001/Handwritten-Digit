@@ -1,0 +1,96 @@
+.probability-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--interactive-cyan);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.probs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.prob-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 50px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.digit-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.prob-row.is-winner .digit-badge {
+  background: var(--grad-primary);
+  color: #ffffff;
+  border-color: var(--interactive-cyan);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+}
+
+.prob-track {
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: rgba(30, 41, 59, 0.8);
+  overflow: hidden;
+}
+
+.prob-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: rgba(34, 211, 238, 0.4);
+  transition: width 0.4s ease-out, background-color 0.3s ease;
+}
+
+.prob-row.is-winner .prob-fill {
+  background: linear-gradient(90deg, #22d3ee 0%, #8b5cf6 100%);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.prob-value {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: right;
+  font-weight: 500;
+}
+
+.prob-row.is-winner .prob-value {
+  color: var(--interactive-cyan);
+  font-weight: 700;
+}
