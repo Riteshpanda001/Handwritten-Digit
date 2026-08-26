@@ -9,23 +9,28 @@ from torch.utils.data import Dataset, DataLoader
 from typing import Tuple, Optional
 
 
-def load_idx_images(file_path: str) -> np.ndarray:
+def load_idx_images(file_path: str, max_samples: Optional[int] = None) -> np.ndarray:
     """Read MNIST idx3-ubyte image file into numpy array (N, 28, 28)."""
     with open(file_path, 'rb') as f:
         magic, num_images, rows, cols = struct.unpack(">IIII", f.read(16))
         if magic != 2051:
             raise ValueError(f"Invalid magic number {magic} in image file {file_path}")
-        images = np.frombuffer(f.read(), dtype=np.uint8)
+        if max_samples and max_samples < num_images:
+            num_images = max_samples
+        data = f.read(num_images * rows * cols)
+        images = np.frombuffer(data, dtype=np.uint8)
         return images.reshape(num_images, rows, cols)
 
 
-def load_idx_labels(file_path: str) -> np.ndarray:
+def load_idx_labels(file_path: str, max_samples: Optional[int] = None) -> np.ndarray:
     """Read MNIST idx1-ubyte label file into numpy array (N,)."""
     with open(file_path, 'rb') as f:
         magic, num_labels = struct.unpack(">II", f.read(8))
         if magic != 2049:
             raise ValueError(f"Invalid magic number {magic} in label file {file_path}")
-        labels = np.frombuffer(f.read(), dtype=np.uint8)
+        if max_samples and max_samples < num_labels:
+            num_labels = max_samples
+        labels = np.frombuffer(f.read(num_labels), dtype=np.uint8)
         return labels
 
 

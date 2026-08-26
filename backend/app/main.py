@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 from app.config import settings
 from app.database.connection import init_db
 from app.ml.model_loader import ModelLoader
-from app.api.routes import health_routes, prediction_routes, model_routes, history_routes
+from app.api.routes import health_routes, prediction_routes, model_routes, history_routes, auth_routes
 
 
 # Initialize database tables
@@ -52,6 +52,7 @@ app.include_router(health_routes.router, prefix=settings.API_V1_STR)
 app.include_router(prediction_routes.router, prefix=settings.API_V1_STR)
 app.include_router(model_routes.router, prefix=settings.API_V1_STR)
 app.include_router(history_routes.router, prefix=settings.API_V1_STR)
+app.include_router(auth_routes.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/", tags=["Root"])

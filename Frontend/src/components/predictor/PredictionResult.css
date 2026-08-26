@@ -1,0 +1,49 @@
+.prediction-result-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.prediction-digit-box {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  color: #ffffff;
+  font-size: 3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px rgba(34, 211, 238, 0.2);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.prediction-digit-box.has-prediction {
+  background: var(--grad-primary);
+  box-shadow: 0 0 35px rgba(34, 211, 238, 0.4);
+}
+
+.prediction-result-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.prediction-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.prediction-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

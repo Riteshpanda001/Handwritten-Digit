@@ -16,8 +16,10 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = os.path.join(BASE_DIR, "uploads")
     ARCHIVE_DIR: str = os.path.join(os.path.dirname(BASE_DIR), "archive")
 
-    # App options
-    LOG_LEVEL: str = "INFO"
+    # Security options
+    SECRET_KEY: str = "digit_classifier_secret_key_super_secure_99"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

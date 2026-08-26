@@ -14,18 +14,19 @@ class HistoryService:
         db: Session,
         skip: int = 0,
         limit: int = 50,
-        digit_filter: Optional[int] = None
+        digit_filter: Optional[int] = None,
+        user_id: Optional[int] = None
     ) -> Dict[str, Any]:
-        records = PredictionRepository.get_history(db, skip=skip, limit=limit, digit_filter=digit_filter)
-        total_count = PredictionRepository.count_records(db)
+        records = PredictionRepository.get_history(db, skip=skip, limit=limit, digit_filter=digit_filter, user_id=user_id)
+        total_count = PredictionRepository.count_records(db, user_id=user_id)
         return {
             "total_count": total_count,
             "records": records
         }
 
     @staticmethod
-    def clear_history(db: Session) -> Dict[str, Any]:
-        deleted_count = PredictionRepository.delete_all_history(db)
+    def clear_history(db: Session, user_id: Optional[int] = None) -> Dict[str, Any]:
+        deleted_count = PredictionRepository.delete_all_history(db, user_id=user_id)
         return {
             "status": "success",
             "deleted_count": deleted_count
