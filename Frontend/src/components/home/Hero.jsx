@@ -1,9 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Hero.css';
 import { ArrowRight, Terminal } from 'lucide-react';
 import logoPng from '../../assets/logo/handwritten-digit-logo.png';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Hero() {
+  const navigate = useNavigate();
+  const { isAuthenticated, openAuthModal } = useAuth();
+
+  const handleStartPredicting = (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      openAuthModal('login');
+    } else {
+      navigate('/predictor');
+    }
+  };
+
   return (
     <section className="hero-section">
       <div className="hero-bg-glow"></div>
@@ -13,13 +26,13 @@ export default function Hero() {
             Real-Time <span className="text-gradient">Handwritten Digit</span> Recognition
           </h1>
           <p className="hero-description">
-            An interactive deep learning web application for real-time handwritten digit recognition. Draw directly on the interactive canvas or upload image files to analyze digits powered by a PyTorch CNN model, OpenCV image normalization, and a high-performance FastAPI backend.
+            An interactive AI-powered web application for real-time handwritten digit recognition. Draw directly on the canvas or upload an image to identify digits from 0–9 using a PyTorch CNN alongside SVM, KNN, and Random Forest models. Advanced OpenCV preprocessing prepares handwritten inputs for classification, while FastAPI delivers fast predictions, confidence scores, probability analysis, and prediction history.
           </p>
 
           <div className="hero-actions">
-            <Link to="/predictor" className="btn btn-primary">
-              Try Canvas Demo <ArrowRight size={18} />
-            </Link>
+            <button onClick={handleStartPredicting} className="btn btn-primary">
+              Start Predicting <ArrowRight size={18} />
+            </button>
             <Link to="/model" className="btn btn-secondary">
               <Terminal size={18} /> View Architecture
             </Link>
