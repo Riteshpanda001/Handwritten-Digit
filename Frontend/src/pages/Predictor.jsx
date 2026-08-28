@@ -15,13 +15,23 @@ import ConfidenceBar from '../components/predictor/ConfidenceBar';
 import ProbabilityChart from '../components/predictor/ProbabilityChart';
 import PredictionActions from '../components/predictor/PredictionActions';
 import AlgorithmComparison from '../components/predictor/AlgorithmComparison';
-import HandwritingQuality from '../components/predictor/HandwritingQuality';
-import ImageSimilarity from '../components/predictor/ImageSimilarity';
 
 import { predictCanvas, predictImage } from '../services/predictionApi';
 import { getModelInfo } from '../services/modelApi';
 
 import { Edit3, Upload, Sparkles, Activity, CheckCircle2, AlertCircle, AlertTriangle } from 'lucide-react';
+
+const isCanvasBlank = (canvas) => {
+  if (!canvas) return true;
+  const ctx = canvas.getContext('2d');
+  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i] > 20 || data[i + 1] > 20 || data[i + 2] > 20) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export default function Predictor() {
   const { isAuthenticated, openAuthModal } = useAuth();
@@ -39,8 +49,6 @@ export default function Predictor() {
     Array.from({ length: 10 }, (_, d) => ({ digit: d, confidence: 0 }))
   );
   const [algorithmPredictions, setAlgorithmPredictions] = useState(null);
-  const [handwritingQuality, setHandwritingQuality] = useState(null);
-  const [imageSimilarity, setImageSimilarity] = useState(null);
 
   const [apiOnline, setApiOnline] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -76,8 +84,6 @@ export default function Predictor() {
     setConfidence(0);
     setProbabilities(Array.from({ length: 10 }, (_, d) => ({ digit: d, confidence: 0 })));
     setAlgorithmPredictions(null);
-    setHandwritingQuality(null);
-    setImageSimilarity(null);
   };
 
   const handleImageUploaded = (dataUrl, fileObj) => {
@@ -105,6 +111,10 @@ export default function Predictor() {
           setErrorMsg('Canvas is not available.');
           return;
         }
+        if (isCanvasBlank(canvas)) {
+          setErrorMsg('The drawing board is empty. Please draw a digit before classifying.');
+          return;
+        }
         const dataUrl = canvas.toDataURL('image/png');
         setInputPreviewData(dataUrl);
         setIsLoading(true);
@@ -126,8 +136,6 @@ export default function Predictor() {
       setConfidence(result.confidence);
       setProbabilities(result.probabilities);
       setAlgorithmPredictions(result.algorithmPredictions);
-      setHandwritingQuality(result.handwritingQuality);
-      setImageSimilarity(result.imageSimilarity);
 
       setApiOnline(true);
       setIsLoading(false);
@@ -138,8 +146,6 @@ export default function Predictor() {
       setConfidence(0);
       setProbabilities(Array.from({ length: 10 }, (_, d) => ({ digit: d, confidence: 0 })));
       setAlgorithmPredictions(null);
-      setHandwritingQuality(null);
-      setImageSimilarity(null);
       setErrorMsg(err.message || 'Prediction failed. Please try again.');
     }
   };
@@ -154,9 +160,9 @@ export default function Predictor() {
             <div className="predictor-badge">
               <Sparkles size={15} /> Multi-Algorithm Machine Learning Suite
             </div>
-            <h1 className="predictor-title">Handwritten Digit Classification & Quality Analysis</h1>
+            <h1 className="predictor-title">Handwritten Digit Classification</h1>
             <p className="predictor-description">
-              Draw any digit or upload an image to perform real-time predictions across CNN, Support Vector Machine (SVM), k-Nearest Neighbors (KNN), and Random Forest classifiers alongside handwriting quality scoring and prototype image similarity analysis.
+              Draw any digit or upload an image to perform real-time predictions across CNN, Support Vector Machine (SVM), k-Nearest Neighbors (KNN), and Random Forest classifiers.
             </p>
           </div>
 
@@ -266,21 +272,17 @@ export default function Predictor() {
 
               <ProbabilityChart probabilities={probabilities} topPredicted={prediction} />
 
-              {/* Multi-Algorithm ML Comparison Suite */}
-              <AlgorithmComparison algorithmPredictions={algorithmPredictions} />
-
-              {/* Handwriting Quality / Correctness Evaluator */}
-              <HandwritingQuality qualityData={handwritingQuality} />
-
-              {/* Image Similarity Engine */}
-              <ImageSimilarity similarityData={imageSimilarity} />
-
               <PredictionActions
                 prediction={prediction}
                 confidence={confidence}
                 onReset={handleClear}
               />
             </div>
+          </div>
+
+          {/* Multi-Algorithm ML Comparison Suite (Full Width Card at End) */}
+          <div className="glass-card predictor-card full-width-algo-card">
+            <AlgorithmComparison algorithmPredictions={algorithmPredictions} />
           </div>
         </div>
       </main>

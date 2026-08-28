@@ -3,7 +3,7 @@ import './AlgorithmComparison.css';
 import { Cpu, Layers, GitBranch, Share2 } from 'lucide-react';
 
 export default function AlgorithmComparison({ algorithmPredictions }) {
-  if (!algorithmPredictions) return null;
+  const preds = algorithmPredictions || {};
 
   const algorithms = [
     {
@@ -11,28 +11,28 @@ export default function AlgorithmComparison({ algorithmPredictions }) {
       title: 'PyTorch 2D CNN',
       badge: 'Deep Learning',
       icon: Cpu,
-      data: algorithmPredictions.cnn || { predicted_digit: '?', confidence: 0, accuracy_score: 0.992 }
+      data: preds.cnn || { predicted_digit: '?', confidence: 0, accuracy_score: 0.992 }
     },
     {
       key: 'svm',
       title: 'Support Vector Machine',
       badge: 'SVM (RBF)',
       icon: Layers,
-      data: algorithmPredictions.svm || { predicted_digit: '?', confidence: 0, accuracy_score: 0.979 }
+      data: preds.svm || { predicted_digit: '?', confidence: 0, accuracy_score: 0.979 }
     },
     {
       key: 'random_forest',
       title: 'Random Forest',
       badge: 'Ensemble (100 Trees)',
       icon: GitBranch,
-      data: algorithmPredictions.random_forest || { predicted_digit: '?', confidence: 0, accuracy_score: 0.969 }
+      data: preds.random_forest || { predicted_digit: '?', confidence: 0, accuracy_score: 0.969 }
     },
     {
       key: 'knn',
       title: 'k-Nearest Neighbors',
       badge: 'KNN (k=3)',
       icon: Share2,
-      data: algorithmPredictions.knn || { predicted_digit: '?', confidence: 0, accuracy_score: 0.968 }
+      data: preds.knn || { predicted_digit: '?', confidence: 0, accuracy_score: 0.968 }
     }
   ];
 
@@ -48,7 +48,6 @@ export default function AlgorithmComparison({ algorithmPredictions }) {
           const IconComponent = item.icon;
           const predDigit = item.data.predicted_digit !== undefined ? item.data.predicted_digit : '?';
           const confPercent = item.data.confidence !== undefined ? (item.data.confidence * 100).toFixed(1) : '0.0';
-          const accuracyVal = item.data.accuracy_score !== undefined ? (item.data.accuracy_score * 100).toFixed(1) : '97.0';
 
           return (
             <div key={item.key} className="algo-card">
@@ -72,10 +71,6 @@ export default function AlgorithmComparison({ algorithmPredictions }) {
                   <div className="algo-stat-row">
                     <span>Confidence:</span>
                     <strong className="algo-conf-val">{confPercent}%</strong>
-                  </div>
-                  <div className="algo-stat-row">
-                    <span>Benchmark Acc:</span>
-                    <strong className="algo-acc-val">{accuracyVal}%</strong>
                   </div>
                 </div>
               </div>

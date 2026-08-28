@@ -1,36 +1,40 @@
 .algo-comparison-container {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
 }
 
 .algo-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .algo-title {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary, #ffffff);
   margin: 0;
 }
 
 .algo-subtitle {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-secondary, #94a3b8);
   font-weight: 500;
 }
 
 .algo-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.85rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
+  .algo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
   .algo-grid {
     grid-template-columns: 1fr;
   }

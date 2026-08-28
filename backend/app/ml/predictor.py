@@ -41,6 +41,10 @@ class DigitPredictor:
 
         tensor_input = tensor_input.to(device)
 
+        # Check if input tensor is completely blank (all black pixels / no drawn stroke)
+        if torch.max(tensor_input) < 0.05 or torch.sum(tensor_input) < 0.1:
+            raise ValueError("Input drawing canvas or image is blank. Please draw a digit (0-9) before predicting.")
+
         # 1. CNN Model Inference
         with torch.no_grad():
             logits = model(tensor_input)

@@ -137,3 +137,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+.full-width-algo-card {
+  margin-top: 2.5rem;
+  width: 100%;
+}

@@ -40,7 +40,10 @@ def test_predict_unauthenticated_returns_401():
 
 def test_predict_canvas_endpoint():
     headers = get_auth_headers()
+    from PIL import ImageDraw
     img = Image.new("L", (28, 28), color=0)
+    draw = ImageDraw.Draw(img)
+    draw.line((5, 5, 20, 20), fill=255, width=4)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     b64_str = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode("utf-8")
@@ -51,6 +54,17 @@ def test_predict_canvas_endpoint():
     assert "predicted_digit" in data
     assert "confidence" in data
     assert "record_id" in data
+
+
+def test_predict_empty_canvas_returns_400():
+    headers = get_auth_headers()
+    img = Image.new("L", (28, 28), color=0)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64_str = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    response = client.post("/api/v1/predict/canvas", json={"image_data": b64_str}, headers=headers)
+    assert response.status_code == 400
 
 
 def test_predict_image_endpoint():
