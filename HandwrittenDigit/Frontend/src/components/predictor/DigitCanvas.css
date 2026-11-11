@@ -1,0 +1,54 @@
+.digit-canvas-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.canvas-wrapper {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background: #000000;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: crosshair;
+}
+
+.canvas-wrapper:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 25px rgba(34, 211, 238, 0.15);
+}
+
+.canvas-wrapper.is-drawing {
+  border-color: var(--interactive-cyan);
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.3);
+}
+
+.digit-canvas-element {
+  display: block;
+  touch-action: none;
+  background-color: #000000;
+}
+
+.canvas-overlay-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.canvas-wrapper.has-strokes .canvas-overlay-hint {
+  opacity: 0;
+}
