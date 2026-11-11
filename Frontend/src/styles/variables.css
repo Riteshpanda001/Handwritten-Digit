@@ -1,0 +1,56 @@
+:root {
+  /* Exact Design Tokens requested by User */
+  --bg-dark: #070B14;           /* 🌌 Main Background: Midnight */
+  --bg-card: #0F172A;           /* 🧱 Cards / Panels: Dark Navy */
+  --bg-card-hover: #1E293B;     /* Card Hover State */
+  --bg-glass: rgba(15, 23, 42, 0.85);
+
+  --btn-primary: #3B82F6;       /* 🔵 Primary Buttons: Electric Blue */
+  --interactive-cyan: #22D3EE;  /* 💎 Interactive Elements: Bright Cyan */
+  --ai-violet: #8B5CF6;         /* 🟣 AI Highlights: Violet */
+
+  --text-primary: #F8FAFC;      /* ⚪ Main Text: White */
+  --text-secondary: #94A3B8;    /* 🌫️ Secondary Text: Slate */
+  --text-muted: #64748B;
+  --text-glow: #22D3EE;
+
+  --border-color: #1E293B;      /* 🔲 Borders: Blue Gray */
+  --border-glass: #1E293B;
+  --border-glow: rgba(34, 211, 238, 0.35);
+
+  --accent-emerald: #34D399;    /* 🟢 Success / Confidence: Emerald */
+  --success-color: #34D399;
+
+  /* Aliases for Brand Accents */
+  --accent-cyan: #22D3EE;
+  --accent-blue: #3B82F6;
+  --accent-purple: #8B5CF6;
+
+  /* Harmonized Gradients */
+  --grad-primary: linear-gradient(135deg, #3B82F6 0%, #22D3EE 50%, #8B5CF6 100%);
+  --grad-ai: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  --grad-dark: linear-gradient(180deg, #070B14 0%, #0F172A 100%);
+  --grad-glass: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+
+  /* Typography */
+  --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  --glow-cyan: 0 0 25px rgba(34, 211, 238, 0.4);
+  --glow-purple: 0 0 25px rgba(139, 92, 246, 0.4);
+
+  /* Layout & Spacing */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  --max-width: 1280px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
