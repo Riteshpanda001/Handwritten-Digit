@@ -2,7 +2,10 @@
 Application Configuration settings using pydantic_settings.
 """
 import os
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEFAULT_SECRET_KEY = "digit_classifier_secret_key_super_secure_99"
 
 
 class Settings(BaseSettings):
@@ -17,9 +20,16 @@ class Settings(BaseSettings):
     ARCHIVE_DIR: str = os.path.join(os.path.dirname(BASE_DIR), "archive")
 
     # Security options
-    SECRET_KEY: str = "digit_classifier_secret_key_super_secure_99"
+    SECRET_KEY: str = DEFAULT_SECRET_KEY
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
+    @field_validator("SECRET_KEY", mode="before")
+    @classmethod
+    def default_secret_if_empty(cls, v: str | None) -> str:
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return DEFAULT_SECRET_KEY
+        return v
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
