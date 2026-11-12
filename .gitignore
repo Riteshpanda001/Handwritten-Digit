@@ -1,0 +1,37 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Node / Frontend build
+node_modules/
+dist/
+dist-ssr/
+
+# Python caches & tests
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Environment variables & local secrets
+.env
+.env.local
+
+# Databases
+*.db
+*.sqlite3
+
+# Uploaded images (keep directory tracked)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
