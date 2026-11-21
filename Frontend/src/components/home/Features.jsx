@@ -7,7 +7,6 @@ import {
   Maximize2,
   BarChart2,
   ShieldCheck,
-  ArrowRight,
   Sparkles,
   Layers,
   Activity,
@@ -125,18 +124,9 @@ export default function Features() {
             >
               <div className="feature-header">
                 <div className="feature-icon-wrapper">{feat.icon}</div>
-                <span className="feature-tag">{feat.tag}</span>
               </div>
               <h3 className="feature-title">{feat.title}</h3>
               <p className="feature-desc">{feat.description}</p>
-              
-              <div className="feature-metrics">
-                <span className="metric-badge">⚡ {feat.metric}</span>
-              </div>
-
-              <button className="feature-footer-link" type="button">
-                Explore feature <ArrowRight size={14} />
-              </button>
             </div>
           ))}
         </div>
