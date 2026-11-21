@@ -1,207 +1,283 @@
-# 🖊️ Handwritten Digit Classification & Recognition System
+# 🖊️ Handwritten Digit Recognition System
 
-An end-to-end, production-grade web application for real-time handwritten digit recognition (0–9). Powered by a custom **PyTorch 2D Convolutional Neural Network (CNN)**, **OpenCV** image auto-centering and preprocessing pipeline, a high-performance **FastAPI** REST backend, and a modern **React + Vite** frontend styled with the *Midnight Vision* design system.
+An end-to-end web application that recognises handwritten digits (0–9) in real time. Draw a digit on a canvas or upload an image, and the system classifies it with a custom **PyTorch CNN**, cross-checks the result against classical ML models (**SVM, KNN, Random Forest**), and rates the quality of your handwriting.
+
+- **Backend:** FastAPI + PyTorch + scikit-learn + OpenCV + SQLAlchemy (SQLite)
+- **Frontend:** React 19 + Vite, with an interactive ML pipeline diagram built on `@xyflow/react`
+- **Dataset:** MNIST (60,000 training / 10,000 test images)
 
 ---
 
-## 📁 Complete Project Structure
+## 🌟 Features
+
+| Feature | Description |
+| :--- | :--- |
+| **Drawing canvas** | HTML5 canvas with adjustable brush size, eraser, undo and clear |
+| **Image upload** | Drag-and-drop or file picker for PNG, JPG, BMP and WebP images |
+| **OpenCV preprocessing** | Thresholding, contour bounding box, aspect-ratio-preserving resize, centering on a 28×28 MNIST-style frame |
+| **Multi-model inference** | PyTorch CNN plus SVM, KNN and Random Forest run on the same input |
+| **Confidence analytics** | Softmax confidence and a full 10-class probability distribution |
+| **Handwriting quality score** | 0–100 score based on model consensus, mean confidence, stroke density and template similarity |
+| **Image similarity** | Cosine similarity, correlation and MSE against mean MNIST digit templates |
+| **Prediction history** | Every prediction is stored in SQLite; browse with pagination, filter by digit, or clear |
+| **Model dashboard** | Accuracy, model comparison, confusion matrix and a draggable pipeline graph |
+
+---
+
+## 🧠 How It Works
+
+```
+Canvas / Image Upload
+        │
+        ▼
+OpenCV Preprocessing  →  crop to digit → resize → center on 28×28 → normalise
+        │
+        ├──► PyTorch CNN ───────┐
+        ├──► SVM (RBF)          │
+        ├──► KNN (k = 3)        ├──► Consensus + Confidence
+        └──► Random Forest ─────┘            │
+                                             ▼
+                      Template Similarity + Handwriting Quality Score
+                                             │
+                                             ▼
+                          Final prediction  →  SQLite history  →  JSON response
+```
+
+### CNN architecture (`DigitCNN`)
+
+| Stage | Layers |
+| :--- | :--- |
+| Block 1 | Conv(1→32) → BN → ReLU → Conv(32→32) → BN → ReLU → MaxPool → Dropout2d(0.25) |
+| Block 2 | Conv(32→64) → BN → ReLU → Conv(64→64) → BN → ReLU → MaxPool → Dropout2d(0.25) |
+| Classifier | Flatten (64×7×7) → FC(128) → BN → ReLU → Dropout(0.5) → FC(10) |
+
+### Model comparison (MNIST test set)
+
+| Model | Type | Accuracy |
+| :--- | :--- | :---: |
+| **PyTorch CNN** | Deep neural network | **99.2%** |
+| SVM | RBF kernel | 97.9% |
+| Random Forest | 100 trees | 96.9% |
+| KNN | k = 3, distance-weighted | 96.8% |
+
+> Figures come from `backend/app/ml/artifacts/metrics.json`. The classical models are trained on a subset of MNIST, so they score lower than the CNN.
+
+### Handwriting quality score
+
+`score = 40% model consensus + 30% mean confidence + 20% stroke clarity + 10% template similarity`
+
+| Score | Level |
+| :---: | :--- |
+| ≥ 88 | Excellent |
+| 74 – 87 | Good |
+| 55 – 73 | Fair |
+| < 55 | Needs Improvement |
+
+---
+
+## 📁 Project Structure
 
 ```
 HandwrittenDigit/
-├── archive/                             # Raw MNIST dataset archive files (IDX format)
-│   ├── t10k-images-idx3-ubyte.gz
-│   ├── t10k-labels-idx1-ubyte.gz
-│   ├── train-images-idx3-ubyte.gz
-│   └── train-labels-idx1-ubyte.gz
-│
-├── backend/                             # Python FastAPI REST Server & PyTorch ML Engine
+├── archive/                      # MNIST dataset (IDX binary files)
+├── backend/
 │   ├── app/
-│   │   ├── api/
-│   │   │   └── routes/                  # API Endpoint Controllers
-│   │   │       ├── auth_routes.py       # User authentication & JWT management
-│   │   │       ├── health_routes.py     # System & model health check
-│   │   │       ├── history_routes.py    # Prediction logs & database CRUD
-│   │   │       ├── model_routes.py      # Model metadata, specs & weight reloading
-│   │   │       └── prediction_routes.py # Canvas base64 & image upload inferencing
-│   │   ├── core/                        # Global Constants & Exception Handlers
-│   │   ├── database/                    # SQLAlchemy ORM, SQLite DB & Repositories
-│   │   ├── ml/                          # PyTorch Neural Network & Inference Logic
-│   │   │   ├── class_labels.py
-│   │   │   ├── model_architecture.py   # DigitCNN ConvNet Definition
-│   │   │   ├── model_loader.py         # Singleton Model Loader
-│   │   │   └── predictor.py            # Softmax Confidence & Top-K Predictions
-│   │   ├── preprocessing/               # OpenCV Preprocessing Pipeline
-│   │   │   ├── canvas_processor.py     # Base64 string decoding
-│   │   │   ├── image_processor.py      # Contour extraction & auto-centering
-│   │   │   └── normalization.py        # PyTorch Tensor normalization
-│   │   ├── schemas/                     # Pydantic Request/Response Validation Schemas
-│   │   ├── services/                    # Business Logic Layer
-│   │   ├── utils/                       # Image Utilities & Custom Logging
-│   │   ├── config.py                    # Environment Configuration & App Settings
-│   │   ├── dependencies.py              # FastAPI Dependency Injections
-│   │   └── main.py                      # FastAPI Application Entrypoint
-│   ├── models/                          # Trained Weights Storage
-│   │   └── digit_classifier.pt          # PyTorch Model Checkpoint
-│   ├── notebooks/                       # Training & Analysis Jupyter Notebooks
-│   │   └── handwritten_digit_training.ipynb
-│   ├── tests/                           # Pytest Automated Test Suite
-│   │   ├── test_health.py
-│   │   ├── test_model.py
-│   │   ├── test_prediction.py
-│   │   └── test_preprocessing.py
-│   ├── training/                        # Dataset Parsers & Model Training Scripts
-│   │   ├── dataset.py                   # IDX Binary Parser
-│   │   ├── evaluate.py                 # Performance metrics & confusion matrix generator
-│   │   ├── generate_metrics.py         # Evaluation exporter
-│   │   └── train.py                     # CNN Training Loop (99%+ Accuracy)
-│   ├── uploads/                         # Temporary storage for uploaded test images
-│   ├── venv/                            # Python Virtual Environment
-│   ├── .env                             # Environment Variables Config
-│   ├── Dockerfile                       # Backend Containerization Spec
-│   └── requirements.txt                 # Backend Python Dependencies
-│
-├── Frontend/                            # React + Vite Web Application
-│   ├── public/                          # Static Assets & Icons
-│   ├── src/
-│   │   ├── components/                  # Reusable UI Components
-│   │   │   ├── history/                 # Prediction History Table & Filters
-│   │   │   ├── home/                    # Hero Banner & Quick Actions
-│   │   │   ├── layout/                  # Navigation Bar & Footer Layouts
-│   │   │   ├── model/                   # Model Architecture & Metric Cards
-│   │   │   └── predictor/               # HTML5 Drawing Canvas & Drag-and-Drop Uploader
-│   │   ├── pages/                       # React Router Page Views
-│   │   │   ├── About.jsx                # Project Overview & System Specs
-│   │   │   ├── History.jsx              # Historical Predictions Log Page
-│   │   │   ├── Home.jsx                 # Landing View
-│   │   │   ├── Model.jsx                # CNN Architecture & Metrics Dashboard
-│   │   │   ├── NotFound.jsx             # 404 Error View
-│   │   │   └── Predictor.jsx            # Interactive Prediction Workstation
-│   │   ├── services/                    # Axios API Service Layer
-│   │   │   └── api.js                   # REST Client endpoints
-│   │   ├── styles/                      # Theme Variables & Global CSS
-│   │   ├── App.jsx                      # App Shell & Router Configuration
-│   │   └── main.jsx                     # React Entrypoint
-│   ├── package.json                     # Frontend NPM Dependencies
-│   └── vite.config.js                   # Vite Development Server Configuration
-│
-└── README.md                            # Comprehensive Project Documentation
+│   │   ├── api/routes/           # health, prediction, model, history endpoints
+│   │   ├── core/                 # constants, exceptions
+│   │   ├── database/             # SQLAlchemy engine, models, repositories
+│   │   ├── ml/
+│   │   │   ├── artifacts/        # SVM/KNN/RF models, digit templates, metrics.json
+│   │   │   ├── classical_models.py
+│   │   │   ├── model_architecture.py
+│   │   │   ├── model_loader.py
+│   │   │   ├── predictor.py
+│   │   │   ├── quality_evaluator.py
+│   │   │   └── similarity_engine.py
+│   │   ├── preprocessing/        # canvas decoding, OpenCV centering, normalisation
+│   │   ├── schemas/              # Pydantic request/response models
+│   │   ├── services/             # prediction, preprocessing, model, history logic
+│   │   ├── utils/                # image helpers, logger
+│   │   ├── config.py
+│   │   ├── dependencies.py
+│   │   └── main.py
+│   ├── models/digit_classifier.pt   # trained CNN weights
+│   ├── notebooks/                   # training notebook
+│   ├── tests/                       # pytest suite
+│   ├── training/                    # dataset parser, train/evaluate scripts
+│   ├── uploads/                     # saved uploaded images
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── .env.example
+└── Frontend/
+    ├── src/
+    │   ├── components/           # history, home, layout, model (pipeline graph), predictor
+    │   ├── data/pipelineData.js  # pipeline nodes and edges
+    │   ├── pages/                # Home, Predictor, Model, History, About, NotFound
+    │   ├── services/api.js       # REST client
+    │   └── styles/
+    ├── package.json
+    └── vite.config.js
 ```
 
 ---
 
-## 🌟 Key Features
-
-1. **Interactive HTML5 Drawing Canvas**:
-   - Interactive drawing canvas with adjustable brush sizes, eraser mode, clear actions, and live visual output.
-2. **Multi-Format Image Upload**:
-   - Drag-and-drop or file picker support for PNG, JPG, BMP, and WebP digit images.
-3. **OpenCV Preprocessing Engine**:
-   - Contour bounding box detection, aspect-ratio preserving 20x20 scaling, 28x28 black padding, and tensor normalization matching MNIST format.
-4. **PyTorch 2D CNN Architecture**:
-   - Dual Convolutional blocks (Conv2D -> BatchNorm2D -> ReLU -> MaxPool2D), Dropout regularization (0.25 & 0.50), and Dense Fully-Connected layers achieving **99%+ test accuracy**.
-5. **Softmax Confidence Analytics**:
-   - Real-time prediction rendering top digit, percentage confidence, and a complete 10-class probability distribution bar chart.
-6. **Prediction Logs & Persistence**:
-   - SQLite database storing prediction timestamps, confidence scores, input types (canvas vs upload), and classified digits with filtering and deletion support.
-7. **Model Analytics & Evaluation Dashboard**:
-   - Dedicated `/model` view displaying CNN layer structure, dataset statistics, performance evaluation metrics, and a confusion matrix visualization.
-
----
-
-## 🛠️ Technology Stack
-
-| Domain | Technologies |
-| :--- | :--- |
-| **Frontend** | React 18, Vite, JavaScript (JSX), Vanilla CSS (Midnight Vision Theme), Lucide React Icons, React Router v7 |
-| **Backend** | Python 3.14+, FastAPI, PyTorch 2.0+, OpenCV (`opencv-python-headless`), Pillow, SQLAlchemy 2.0, SQLite, Pydantic v2 |
-| **Authentication & Security** | PyJWT (JSON Web Tokens), Passlib (Bcrypt hashing) |
-| **Testing & Deployment** | Pytest, Uvicorn, Docker, Axios |
-
----
-
-## 🚀 Quick Start Guide
+## 🚀 Getting Started
 
 ### Prerequisites
-- **Python**: 3.9+ installed
-- **Node.js**: v18+ and `npm` installed
 
----
+- Python 3.9+ (3.11 recommended)
+- Node.js 18+ and npm
 
-### 1. Backend Server Setup & Execution
+### 1. Backend
 
 ```bash
-# 1. Navigate to backend directory
 cd backend
 
-# 2. Activate virtual environment
-# On Windows (PowerShell):
-.\venv\Scripts\Activate.ps1
-# On Windows (CMD):
-venv\Scripts\activate.bat
-# On Linux/macOS:
-source venv/bin/activate
+# Create and activate a virtual environment
+python -m venv venv
+# Windows (PowerShell):  .\venv\Scripts\Activate.ps1
+# Windows (CMD):         venv\Scripts\activate.bat
+# Linux / macOS:         source venv/bin/activate
 
-# 3. Install Python dependencies (if needed)
 pip install -r requirements.txt
 
-# 4. Run metrics generator / database table initialization
-python training/generate_metrics.py
+# Optional: copy and edit environment settings
+cp .env.example .env
 
-# 5. Start FastAPI development server
+# Start the API server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-- **Backend API Base URL**: `http://localhost:8000/api/v1`
-- **Interactive Swagger Docs**: `http://localhost:8000/docs`
-- **ReDoc API Docs**: `http://localhost:8000/redoc`
 
----
+- API base URL: `http://localhost:8000/api/v1`
+- Swagger docs: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-### 2. Frontend Web App Execution
+Trained weights (`models/digit_classifier.pt`) and classical-model artifacts are already included, so training is optional.
+
+### 2. Frontend
 
 ```bash
-# Open a new terminal window and navigate to Frontend directory
 cd Frontend
-
-# Install frontend dependencies (if needed)
 npm install
-
-# Start Vite dev server
 npm run dev
 ```
-- **Frontend Web Application**: `http://localhost:5173`
+
+Open `http://localhost:5173`.
+
+To point the frontend at a different backend, set `VITE_API_BASE_URL` (default: `http://localhost:8000/api/v1`).
+
+### 3. (Optional) Retrain the models
+
+The training scripts read the raw MNIST files from `archive/`.
+
+```bash
+cd backend
+
+python training/train.py             # train the CNN → models/digit_classifier.pt
+python training/train_classical.py   # train SVM / KNN / RF + digit templates
+python training/evaluate.py          # confusion matrix & classification report
+python training/generate_metrics.py  # regenerate metrics.json
+```
 
 ---
 
-## 📡 REST API Endpoint Reference
+## 📡 API Reference
+
+Base path: `/api/v1`
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/api/v1/health` | Service health status check & model load status |
-| `POST` | `/api/v1/predict/canvas` | Accepts Base64 canvas drawing string & returns predicted digit with confidence array |
-| `POST` | `/api/v1/predict/image` | Accepts uploaded image file (multipart/form-data) for digit classification |
-| `GET` | `/api/v1/model/info` | Queries CNN layer specs, accuracy/loss, and confusion matrix |
-| `POST` | `/api/v1/model/reload` | Force reloads PyTorch `.pt` model weights into memory |
-| `GET` | `/api/v1/history` | Retrieves paginated prediction logs (supports `digit` filtering) |
-| `DELETE` | `/api/v1/history/clear` | Clears prediction history database records |
-| `POST` | `/api/v1/auth/register` | Registers a new user account & returns JWT bearer token |
-| `POST` | `/api/v1/auth/login` | Authenticates user credentials & returns JWT bearer token |
-| `GET` | `/api/v1/auth/me` | Returns current authenticated user profile |
+| `GET` | `/health` | Service status, model-loaded flag and compute device |
+| `POST` | `/predict/canvas` | Predict from a Base64 canvas image (`{"image_data": "data:image/png;base64,..."}`) |
+| `POST` | `/predict/image` | Predict from an uploaded image (`multipart/form-data`, field `file`) |
+| `GET` | `/model/info` | Model metadata, accuracy and class labels |
+| `POST` | `/model/reload` | Reload model weights from disk |
+| `GET` | `/history` | Paginated prediction history (`skip`, `limit` ≤ 200, optional `digit` 0–9) |
+| `DELETE` | `/history/clear` | Delete all history records |
+
+### Example response — `POST /predict/canvas`
+
+```json
+{
+  "predicted_digit": 7,
+  "digit_name": "Seven",
+  "confidence": 0.99,
+  "confidence_scores": { "0": 0.0, "...": 0.0, "7": 0.99 },
+  "probabilities": [{ "digit": 7, "name": "Seven", "confidence": 0.99 }],
+  "algorithm_predictions": { "cnn": {}, "svm": {}, "knn": {}, "random_forest": {} },
+  "handwriting_quality": { "quality_score": 91.5, "quality_level": "Excellent" },
+  "image_similarity": { "overall_similarity_score": 0.82 },
+  "record_id": 12,
+  "created_at": "2026-11-12T10:30:00Z"
+}
+```
+
+*(Values above are illustrative.)*
 
 ---
 
-## 🧪 Running Backend Unit Tests
+## ⚙️ Configuration
+
+Set these in `backend/.env`:
+
+| Variable | Default | Purpose |
+| :--- | :--- | :--- |
+| `PROJECT_NAME` | `Handwritten Digit Classifier API` | API title |
+| `API_V1_STR` | `/api/v1` | API route prefix |
+| `DATABASE_URL` | `sqlite:///./predictions.db` | History database |
+| `LOG_LEVEL` | `INFO` | Logging verbosity |
+
+---
+
+## 🧪 Testing
 
 ```bash
 cd backend
 python -m pytest
 ```
 
+Tests cover the health endpoint, preprocessing, model loading and prediction.
+
 ---
 
-## 🐳 Docker Deployment
+## 🐳 Docker (Backend)
 
 ```bash
 cd backend
 docker build -t handwritten-digit-backend .
-docker run -p 8000:8000 handwritten-digit-backend
+docker run -p 10000:10000 handwritten-digit-backend
 ```
+
+The container listens on `$PORT` (default `10000`), which suits platforms such as Render.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| Frontend | React 19, Vite, React Router, `@xyflow/react`, Lucide icons, CSS |
+| Backend | FastAPI, Uvicorn, Pydantic v2, SQLAlchemy 2, SQLite |
+| Machine learning | PyTorch, torchvision, scikit-learn, NumPy |
+| Image processing | OpenCV (headless), Pillow |
+| Testing / DevOps | Pytest, HTTPX, Docker |
+
+---
+
+## 🔮 Possible Improvements
+
+- Data augmentation to better handle thick, rotated or off-centre handwriting
+- Train the classical models on the full MNIST set
+- User authentication and per-user history
+- Restrict CORS origins for production (currently open to all)
+
+---
+
+## 📄 License
+
+This is a minor academic project. Add a license of your choice (for example MIT) before distributing.
+
+## 🙏 Acknowledgements
+
+- [MNIST database](http://yann.lecun.com/exdb/mnist/) by Yann LeCun, Corinna Cortes and Christopher J.C. Burges
+- PyTorch, FastAPI, scikit-learn, OpenCV and React open-source communities

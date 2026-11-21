@@ -1,26 +1,8 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
-export const getAuthToken = () => {
-  return localStorage.getItem('auth_token') || null;
-};
-
-export const setAuthToken = (token) => {
-  if (token) {
-    localStorage.setItem('auth_token', token);
-  } else {
-    localStorage.removeItem('auth_token');
-  }
-};
-
-export const getAuthHeader = () => {
-  const token = getAuthToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
 export async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
   const headers = {
-    ...getAuthHeader(),
     ...(options.headers || {})
   };
 
@@ -51,19 +33,17 @@ export async function request(endpoint, options = {}) {
       throw error;
     }
 
+    // If 204 No Content
+    if (response.status === 204) {
+      return null;
+    }
+
     return await response.json();
-  } catch (err) {
+  } catch (error) {
     clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      const timeoutError = new Error('Request timed out. Please check your network connection.');
-      timeoutError.status = 408;
-      throw timeoutError;
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out. Please check your backend connection.');
     }
-    if (!err.status) {
-      const networkError = new Error('Unable to connect to the prediction server.');
-      networkError.status = 503;
-      throw networkError;
-    }
-    throw err;
+    throw error;
   }
 }
