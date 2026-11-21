@@ -13,6 +13,7 @@
 }
 
 .nav-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -42,6 +43,9 @@
 }
 
 .nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -60,50 +64,9 @@
   color: var(--interactive-cyan);
 }
 
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.nav-login-btn {
-  padding: 0.5rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-}
-
-.nav-get-started-btn {
-  padding: 0.55rem 1.35rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-}
-
-/* User Profile Session Styles */
-.user-profile-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.user-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-full);
-  background: rgba(34, 211, 238, 0.12);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+.nav-link.active {
   color: var(--interactive-cyan);
-  font-size: 0.88rem;
   font-weight: 600;
-}
-
-.nav-logout-btn {
-  padding: 0.45rem 1rem;
-  font-size: 0.85rem;
-  border-radius: var(--radius-full);
 }
 
 .mobile-menu-btn {
