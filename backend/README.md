@@ -32,8 +32,6 @@ From the `backend/` directory:
    cp .env.example .env
    ```
 
-   Set a strong `SECRET_KEY` in `.env` before running in production.
-
 4. **Run the API server**
 
    ```bash

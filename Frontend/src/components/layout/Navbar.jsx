@@ -2,19 +2,8 @@ import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './Navbar.css';
 import logoIcon from '../../assets/logo/handwritten-digit-icon.svg';
-import { ArrowRight, UserCheck, LogOut } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
-  const { currentUser, isAuthenticated, openAuthModal, logout } = useAuth();
-
-  const handleNavClick = (e, path) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      openAuthModal('login');
-    }
-  };
-
   return (
     <nav className="navbar">
       <div className="container nav-container">
@@ -32,75 +21,26 @@ export default function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/predictor"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/predictor')}
-            >
+            <NavLink to="/predictor" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               Predictor
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/model"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/model')}
-            >
+            <NavLink to="/model" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               Model
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/history"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/history')}
-            >
+            <NavLink to="/history" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               History
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/about"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/about')}
-            >
+            <NavLink to="/about" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               About
             </NavLink>
           </li>
         </ul>
-
-        <div className="nav-actions">
-          {currentUser ? (
-            <div className="user-profile-bar">
-              <div className="user-badge">
-                <UserCheck size={16} />
-                <span>{currentUser.name}</span>
-              </div>
-              <button
-                className="btn btn-secondary nav-logout-btn"
-                onClick={logout}
-                title="Log Out"
-              >
-                <LogOut size={16} /> Log Out
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                className="btn btn-secondary nav-login-btn"
-                onClick={() => openAuthModal('login')}
-              >
-                Log In
-              </button>
-              <button
-                className="btn btn-primary nav-get-started-btn"
-                onClick={() => openAuthModal('signup')}
-              >
-                Get Started <ArrowRight size={16} />
-              </button>
-            </>
-          )}
-        </div>
       </div>
     </nav>
   );

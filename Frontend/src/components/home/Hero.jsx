@@ -1,21 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Hero.css';
 import { ArrowRight, Terminal } from 'lucide-react';
 import logoPng from '../../assets/logo/handwritten-digit-logo.png';
-import { useAuth } from '../../context/AuthContext';
 
 export default function Hero() {
-  const navigate = useNavigate();
-  const { isAuthenticated, openAuthModal } = useAuth();
-
-  const handleStartPredicting = (e) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      openAuthModal('login');
-    } else {
-      navigate('/predictor');
-    }
-  };
 
   return (
     <section className="hero-section">
@@ -30,9 +18,9 @@ export default function Hero() {
           </p>
 
           <div className="hero-actions">
-            <button onClick={handleStartPredicting} className="btn btn-primary">
+            <Link to="/predictor" className="btn btn-primary">
               Start Predicting <ArrowRight size={18} />
-            </button>
+            </Link>
             <Link to="/model" className="btn btn-secondary">
               <Terminal size={18} /> View Architecture
             </Link>

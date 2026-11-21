@@ -5,11 +5,10 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.config import settings, DEFAULT_SECRET_KEY
+from app.config import settings
 from app.database.connection import init_db
 from app.ml.model_loader import ModelLoader
-from app.api.routes import health_routes, prediction_routes, model_routes, history_routes, auth_routes
-from app.utils.logger import logger
+from app.api.routes import health_routes, prediction_routes, model_routes, history_routes
 
 
 # Initialize database tables
@@ -19,11 +18,6 @@ init_db()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup actions
-    if settings.SECRET_KEY == DEFAULT_SECRET_KEY:
-        logger.warning(
-            "Using default insecure SECRET_KEY for development. "
-            "Set a strong SECRET_KEY in backend/.env before deploying to production."
-        )
     init_db()
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     os.makedirs(os.path.dirname(settings.MODEL_PATH), exist_ok=True)
@@ -58,7 +52,6 @@ app.include_router(health_routes.router, prefix=settings.API_V1_STR)
 app.include_router(prediction_routes.router, prefix=settings.API_V1_STR)
 app.include_router(model_routes.router, prefix=settings.API_V1_STR)
 app.include_router(history_routes.router, prefix=settings.API_V1_STR)
-app.include_router(auth_routes.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/", tags=["Root"])

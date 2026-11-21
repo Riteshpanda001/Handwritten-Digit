@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import './Predictor.css';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { useAuth } from '../context/AuthContext';
 
 // Predictor Sub-Components
 import DigitCanvas from '../components/predictor/DigitCanvas';
@@ -34,7 +33,6 @@ const isCanvasBlank = (canvas) => {
 };
 
 export default function Predictor() {
-  const { isAuthenticated, openAuthModal } = useAuth();
   const canvasRef = useRef(null);
   const [mode, setMode] = useState('canvas'); // 'canvas' | 'upload'
   const [brushSize, setBrushSize] = useState(22);
@@ -96,12 +94,6 @@ export default function Predictor() {
   const runClassification = async () => {
     setIsLoading(false);
     setErrorMsg('');
-
-    if (!isAuthenticated) {
-      openAuthModal('login');
-      setErrorMsg('Account login required. Please log in to perform digit predictions.');
-      return;
-    }
 
     try {
       let result;

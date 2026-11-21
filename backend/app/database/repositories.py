@@ -44,8 +44,6 @@ class PredictionRepository:
         query = db.query(PredictionRecord)
         if user_id is not None:
             query = query.filter(PredictionRecord.user_id == user_id)
-        else:
-            query = query.filter(PredictionRecord.user_id.is_(None))
 
         if digit_filter is not None:
             query = query.filter(PredictionRecord.predicted_digit == digit_filter)
@@ -60,8 +58,6 @@ class PredictionRepository:
         query = db.query(PredictionRecord)
         if user_id is not None:
             query = query.filter(PredictionRecord.user_id == user_id)
-        else:
-            query = query.filter(PredictionRecord.user_id.is_(None))
         return query.count()
 
     @staticmethod
@@ -69,8 +65,6 @@ class PredictionRepository:
         query = db.query(PredictionRecord)
         if user_id is not None:
             query = query.filter(PredictionRecord.user_id == user_id)
-        else:
-            query = query.filter(PredictionRecord.user_id.is_(None))
         num_deleted = query.delete(synchronize_session=False)
         db.commit()
         return num_deleted

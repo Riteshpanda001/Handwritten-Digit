@@ -538,9 +538,9 @@ export const INITIAL_NODES = [
       badge: 'Storage Log',
       category: 'output',
       iconName: 'History',
-      description: 'Store and retrieve authenticated prediction records',
+      description: 'Store and retrieve past prediction records',
       fields: [
-        { label: 'User ID', value: 'Authenticated User' },
+        { label: 'Record ID', value: 'Auto-increment' },
         { label: 'Predicted Digit', value: 'Digit 7' },
         { label: 'Confidence', value: '99.4%' },
         { label: 'Input Mode', value: 'Canvas / Image' },
@@ -551,13 +551,12 @@ export const INITIAL_NODES = [
         outputs: ['history_record']
       },
       infoPanel: {
-        purpose: 'Persist prediction history and quality metrics for user history tracking and analytics',
+        purpose: 'Persist prediction history and quality metrics for inference tracking and analytics',
         technology: 'backend/app/services/history_service.py',
         architecture: 'Prediction Audit Trail Logger',
-        input: 'Prediction outcome, user token, image metadata, and quality scores',
+        input: 'Prediction outcome, image metadata, and quality scores',
         output: 'Persisted database record entry',
         parameters: {
-          'Auth Requirement': 'JWT Token (Bearer)',
           'Storage Target': 'SQLite Prediction Table'
         }
       }
@@ -594,8 +593,7 @@ export const INITIAL_NODES = [
         output: 'Structured JSON Prediction & Model Specification response',
         parameters: {
           'Host': 'localhost:8000',
-          'CORS': 'Enabled for Frontend Client',
-          'Auth': 'JWT Authentication Middleware'
+          'CORS': 'Enabled for Frontend Client'
         }
       }
     }
