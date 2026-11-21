@@ -6,7 +6,7 @@ import os
 import io
 import uuid
 import base64
-from PIL import Image
+from PIL import Image, ImageDraw
 from fastapi.testclient import TestClient
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -40,7 +40,6 @@ def test_predict_unauthenticated_returns_401():
 
 def test_predict_canvas_endpoint():
     headers = get_auth_headers()
-    from PIL import ImageDraw
     img = Image.new("L", (28, 28), color=0)
     draw = ImageDraw.Draw(img)
     draw.line((5, 5, 20, 20), fill=255, width=4)
@@ -70,6 +69,8 @@ def test_predict_empty_canvas_returns_400():
 def test_predict_image_endpoint():
     headers = get_auth_headers()
     img = Image.new("L", (28, 28), color=255)
+    draw = ImageDraw.Draw(img)
+    draw.line([(14, 4), (14, 24)], fill=0, width=3)  # draw black digit stroke
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)

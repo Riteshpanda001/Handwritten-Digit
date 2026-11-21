@@ -23,6 +23,7 @@ def test_digit_cnn_forward():
 def test_digit_predictor():
     predictor = DigitPredictor(settings.MODEL_PATH)
     dummy_input = torch.zeros((1, 28, 28), dtype=torch.float32)
+    dummy_input[0, 5:23, 14] = 1.0  # draw vertical stroke for digit 1
     result = predictor.predict(dummy_input)
 
     assert "predicted_digit" in result
